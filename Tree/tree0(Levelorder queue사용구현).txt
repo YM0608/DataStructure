@@ -1,0 +1,59 @@
+
+
+#include <iostream>
+#include <queue>
+#include "tree0.h"
+using namespace std;
+
+template<class T>
+void Tree<T>::Visit(Node<T>*ptr){cout << ptr->data << " ";}
+
+template<class T>
+void Tree<T>::Insert(Node<T>* &ptr, T &value){
+  if(ptr==0)ptr = new Node<T>(value);
+  else if(value < ptr->data) Insert(ptr->leftChild, value);
+  else if(value > ptr->data) Insert(ptr->rightChild, value);
+  else cout << "\nDuplicate value " << value << " ignored\n";
+}
+template <class T>
+void Tree<T>::Preorder(Node<T> *currentNode){
+  if(currentNode){
+        Visit(currentNode);
+        Preorder(currentNode->leftChild);
+        Preorder(currentNode->rightChild);
+  }
+}
+
+template <class T>
+void Tree<T>::Inorder(Node<T>*currentNode){
+  if(currentNode){
+        Inorder(currentNode->leftChild);
+        Visit(currentNode);
+        Inorder(currentNode->rightChild);
+  }
+}
+
+template <class T>
+void Tree<T>::Postorder(Node<T>*currentNode){
+  if(currentNode){
+        Postorder(currentNode->leftChild);
+        Postorder(currentNode->rightChild);
+        Visit(currentNode);
+  }
+}
+
+template <class T>
+void Tree<T>::Levelorder(){
+  queue<Node<T>*>q;
+  Node<T>*currentNode = root;
+  while(currentNode){
+        Visit(currentNode);
+        if(currentNode->leftChild)q.push(currentNode->leftChild);
+        if(currentNode->rightChild)q.push(currentNode->rightChild);
+        if(q.empty())return;
+        currentNode = q.front();
+        q.pop();
+        }
+}
+//Inorder, Postorder�� helper�Լ� ����
+//Levelorder(����p266�����ϵ� STL ť�� �̿�) ����
