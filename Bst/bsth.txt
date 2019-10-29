@@ -1,0 +1,44 @@
+
+#ifndef BST_H
+#define BST_H
+#include <iostream>
+#include <queue>
+using namespace std;
+
+bool exist = true;
+bool exist2 = true;
+
+template <class K,class E>
+struct Node{
+ Node(K ky, E el, Node<K,E>*left=0, Node<K,E>*right=0, int left1 = 1)
+  : key(ky), element(el), leftChild(left), rightChild(right), leftSize(left1){}
+ Node<K,E>*leftChild;
+ K key;
+ E element;
+ Node<K,E>*rightChild;
+ int leftSize;
+};
+
+template <class K, class E>
+class BST{
+public:
+ BST(){root=0;}
+ void Insert(K &newkey, E &el){Insert(root,newkey,el);}
+ void Inorder(){Inorder(root);}
+ void Postorder(){Postorder(root);}
+ bool Get(const K&, E&);
+ void Print();
+ bool RankGet(int r, K& k, E& e);
+ void Delete(K &oldkey){Delete(root, oldkey);}
+ void ThreeWayJoin(BST<K,E>& small, K midkey, E midel, BST<K,E>& big, int lls);
+ void TwoWayJoin(BST<K,E>& small, BST<K,E>& big);
+private: //helper �Լ���
+ void Visit(Node<K,E>*);
+ void Insert(Node<K,E>* &,K &, E &);
+ void Inorder(Node<K,E>*);
+ void Postorder(Node<K,E>*);
+ void Delete(Node<K, E>*&, K &);
+ Node<K,E>*root;
+};
+
+#endif
