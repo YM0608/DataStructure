@@ -1,0 +1,33 @@
+#include <iostream>
+#include <map>
+using namespace std;
+struct cmp_str{
+  bool operator()(char const *a, char const *b)
+   {return strcmp(a,b) < 0;}
+};
+map<char*, float, cmp_str>ST;
+
+void StoreIntoST(char *name, float val){
+  ST[name] = val;
+}
+
+void PrintValue(char *name){
+  map<char*,float,cmp_str>::iterator iter;
+  iter = ST.find(name);
+  if(iter == ST.end())
+    cout << name << " does not exist " << endl;
+  else
+    cout << name << " " << ST[name] << endl;
+}
+
+int main(){
+  StoreIntoST("abro",23);
+  StoreIntoST("bb",34.5);
+  StoreIntoST("haha",99);
+  ST.erase("bb");
+
+  StroeIntoST("bb",1234.5);
+  PrintValue("bb");
+  PrintValue("haha");
+  PrintValue("hoho");
+}
