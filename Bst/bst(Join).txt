@@ -1,0 +1,153 @@
+
+#include <iostream>
+#include <queue>
+#include "bst.h"
+using namespace std;
+
+template <class K, class E>
+void BST<K,E>::Visit(Node<K,E>*ptr)
+ { cout << ptr->key << ": " << ptr->element << " ";}
+
+template <class K, class E>
+void BST<K,E>::Insert(Node<K,E>* &ptr, K &newkey, E &el){
+ exist = true;
+ if(ptr==0) ptr = new Node<K,E>(newkey, el);
+ else if(newkey < ptr->key){ //���ε����� Ű���� �����Ͱ� ����Ű�� Ű������ �����Ƿ� leftChild�� �Ѿ
+        Insert(ptr->leftChild, newkey, el);
+        if(exist) ptr->leftSize++; // �� ���� ����Ʈ���� �߰��ǹǷ� ���ʼ���Ʈ���� ����� 1��ŭ����
+ }
+ else if(newkey > ptr->key)Insert(ptr->rightChild, newkey, el);
+ else {
+        ptr->element = el;
+        exist = false;
+ }
+}
+
+template <class K, class E>
+void BST<K,E>::Inorder(Node<K,E>* currentNode){
+  if(currentNode){
+        Inorder(currentNode->leftChild);
+        Visit(currentNode);
+        Inorder(currentNode->rightChild);
+   }
+}
+
+template <class K, class E>
+void BST<K,E>::Postorder(Node<K,E>* currentNode){
+  if(currentNode){
+        Postorder(currentNode->leftChild);
+        Postorder(currentNode->rightChild);
+        Visit(currentNode);
+  }
+}
+
+template <class K, class E>
+bool BST<K, E>::Get(const K& k, E& e){
+  Node<K,E>*ptr = root;
+  while(ptr)
+        if(k<ptr->key)ptr = ptr->leftChild;
+        else if(k>ptr->key)ptr = ptr->rightChild;
+        else{e=ptr->element;return true;}
+  return false;
+}
+
+template <class K, class E>
+void BST<K, E>::Print(){
+        cout << endl << "Inorder traversal: ";Inorder();
+        cout << endl << "Postorder traversal: ";Postorder();
+        cout << endl;
+}
+
+template<class K,class E>
+bool BST<K,E>::RankGet(int r,K &k,E& e){
+  Node<K,E>* currentNode = root;
+  while(currentNode)
+        if(r<currentNode->leftSize)currentNode=currentNode->leftChild;
+        else if(r>currentNode->leftSize){
+                r-=currentNode->leftSize;
+                currentNode=currentNode->rightChild;
+        }
+        else {
+                k = currentNode->key;
+                e = currentNode->element;
+                return &currentNode->key;
+        }
+return 0;
+}
+
+
+template <class K,class E>
+void BST<K,E>::Delete(Node<K,E>* &ptr,K &oldkey){
+  Node<K,E>*tmpptr; Node<K,E>*tmpdaddyptr;
+  if(ptr==0){
+        exist2 = false;
+        return;
+  }
+  if(oldkey < ptr->key) {
+        Delete(ptr->leftChild,oldkey);
+        if(exist2) ptr->leftSize--;
+  }
+  else if(oldkey > ptr->key) Delete(ptr->rightChild,oldkey);
+  else{
+     if(!ptr->leftChild && !ptr->rightChild){delete ptr;ptr=0;return;}
+     else if(ptr->leftChild && !ptr->rightChild){
+        tmpptr = ptr; ptr = ptr->leftChild;
+        delete tmpptr; return;
+        }
+     else if(!ptr->leftChild && ptr->rightChild){
+        tmpptr = ptr; ptr = ptr->rightChild;
+        delete tmpptr; return;
+        }
+     else{
+        Node<K,E>*rc = ptr->rightChild;
+        if(!rc->leftChild){
+        ptr->key = rc->key;
+        ptr->element = rc->element;
+        ptr->rightChild = rc->rightChild;
+        delete rc; rc=0;
+        }
+        else{//rc�� ���� �Ƶ��� �Ƶ�, ���� ������ ����  ��������Ű��������� �ű��
+          while(rc->leftChild){
+                tmpptr = rc;
+                rc = rc->leftChild;
+          }
+        ptr->element = rc->element;
+        ptr->key = rc->key;
+        tmpptr->leftChild = rc->rightChild;//rc�� ��ĭ��,�ƺ������leftChild�� �����ϰ�����
+        delete rc; rc=0;
+      }
+    }
+  }
+}
+
+
+template<class K,class E>
+void BST<K,E>::ThreeWayJoin(BST<K,E>& small,K midkey,E midel,BST<K,E>& big,int lls = 1){
+        root = new Node<K,E>(midkey,midel,small.root,big.root,lls);
+        small.root = big.root = 0;
+}
+
+template<class K,class E>
+void BST<K,E>::TwoWayJoin(BST<K,E>& small, BST<K,E>& big){
+        if(!small.root){root = big.root; big.root = 0;return;}
+        if(!big.root){root = small.root; small.root =0; return;}
+        BST<K,E> small2 = small;
+        Node<K,E>*tmpptr; K x; E y;
+        Node<K,E>*tmpptr2;
+        tmpptr = small2.root;
+        while(tmpptr->rightChild){
+                tmpptr = tmpptr->rightChild;
+        }
+        x=tmpptr->key; y=tmpptr->element;
+        small2.Delete(tmpptr->key);
+
+        tmpptr2 = small2.root; int ls = 0;
+        while(tmpptr2){
+                ls += tmpptr2->leftSize;
+                tmpptr2 = tmpptr2->rightChild;
+        }
+
+        ThreeWayJoin(small2, x, y, big, ls);
+
+        small.root=0; big.root=0;
+}
