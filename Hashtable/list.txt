@@ -1,0 +1,81 @@
+
+
+
+#include <iostream>
+#include "list.h"
+ostream& operator<<(ostream& os, IntList& il)
+{
+  Node* ptr = il.first;
+  while(ptr!=0){
+    os << ptr->data << " "; ptr = ptr->link;}
+  os << endl;
+  return os;
+}
+
+void IntList::Push_Back(int e){
+ if(!first)
+   first = last = new Node(e);
+ else{
+  last -> link = new Node(e);
+  last = last -> link;
+}
+}
+int IntList::Front()
+{
+//�Ǿռ��� ����
+if(first)return first->data;
+else return 0;
+}
+void IntList::Pop_Front()
+{
+//�Ǿճ������
+if(first){
+Node *tmp = first;
+tmp = tmp->link;
+delete first;
+first = tmp;
+}
+
+}
+void IntList::Push_Front(int e)
+{
+//�Ǿտ� ����߰�
+if(!first){
+        first = last = new Node(e);
+    }
+else{
+        Node *tmp = new Node(e);
+        tmp->link = first;
+        first = tmp;
+  }
+}
+void IntList::Insert(int e){
+//���ĵ� ����Ʈ�� ������߰�
+if(!first){first = last = new Node(e);}
+else if(first->data > e){
+   Node* tmp = new Node(e);
+   tmp -> link = first;
+   first = tmp;
+}
+else if(first->data == e){
+  return;
+}
+else {
+Node* tmp = first;
+Node* tmp2 = tmp;
+while(e>tmp->data){
+  tmp2 = tmp;
+  tmp = tmp->link;
+  if(tmp && tmp->data == e) return;
+  if(tmp==NULL){
+   Node* tmp4 = new Node(e);
+   tmp2->link = tmp4;
+   break;
+}
+}
+Node* tmp3 = new Node(e);
+tmp2->link = tmp3;
+tmp3->link = tmp;
+
+}
+}
